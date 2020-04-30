@@ -41,5 +41,5 @@ defmodule ApiInstance do
     {Plug.Conn.Status.reason_atom(status_code), body}
 
   # Returns hostname of camunda api
-  defp get_hostname, do: Keyword.get(Application.get_env(:camunda, :camunda), :hostname, nil)
+  defp get_hostname, do: Application.get_env(:camunda, :hostname)
 end
