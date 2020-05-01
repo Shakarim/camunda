@@ -40,9 +40,53 @@ defmodule Camunda.Task do
     end
   end
 
+  @doc ~S"""
+  Creates "variable" key in task and load variable map into it
+
+  ## Params
+
+    task :: Map.t()
+    username :: String.t()
+    password :: String.t()
+    options :: Keyword.t()
+
+  ## Returns
+
+    {:ok, Map.t()} | {:error, Map.t() | String.t()}
+
+  """
   def load_variables(task, username, password, options \\ [])
 
   def load_variables(task, username, password, options) do
-    Map.put(task, "variables", Camunda.Task.Variables.list(task, username, password, options))
+    with {:ok, variables} <- Camunda.Task.Variables.list(task, username, password, options) do
+      {:ok, Map.put(task, "variables", variables)}
+    else
+      _ -> {:error, variables}
+    end
   end
+
+#  def claim(username, password, id, params) do
+#    # Starts module
+#    CamundaApi.start
+#    response = CamundaApi.post!(
+#      @claim
+#      |> String.replace("{id}", id),
+#      Jason.encode!(Map.merge(%{userId: username}, params)),
+#      [
+#        {"Authorization", "Basic #{Base.encode64("#{username}:#{password}")}"},
+#        {"Content-type", "application/json"}
+#      ],
+#      []
+#    )
+#
+#    CamundaApi.handle_request_result(
+#      response,
+#      fn (response) ->
+#        with body <- Map.get(response, :body, nil),
+#             body <- (if body != nil, do: body, else: %{}) do
+#          {:ok, body}
+#        end
+#      end
+#    )
+#  end
 end
