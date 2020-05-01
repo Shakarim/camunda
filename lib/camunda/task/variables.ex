@@ -55,7 +55,7 @@ defmodule Camunda.Task.Variables do
     with request_headers <- ApiInstance.get_basic_header(username, password),
          request_url <- String.replace(@modify, "{id}", id),
          {:ok, encoded_request_body} <- Jason.encode(modifications),
-         {:ok, %HTTPoison.Response{} = response} <- ApiInstance.post(request_url, request_headers, options),
+         {:ok, %HTTPoison.Response{} = response} <- ApiInstance.post(request_url, encoded_request_body, request_headers, options),
          {:no_content, result} <- ApiInstance.get_request_result(response)
       do
       {:ok, result}
