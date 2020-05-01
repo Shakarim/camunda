@@ -29,4 +29,15 @@ defmodule Camunda do
       _ -> [nil, nil]
     end
   end
+
+  @doc """
+  Returns auth data from app configurations
+
+  ## Returns
+
+    {username :: String.t(), password :: String.t()}
+    {nil, nil}
+
+  """
+  def get_auth_data, do: {Application.get_env(:camunda, :username), Application.get_env(:camunda, :password)}
 end
