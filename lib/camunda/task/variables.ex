@@ -4,6 +4,7 @@ defmodule Camunda.Task.Variables do
   """
 
   @list "/task/{id}/variables"
+  @modify "/task/{id}/variables"
 
   @doc """
   Returns list of task variables by username and password
@@ -46,6 +47,25 @@ defmodule Camunda.Task.Variables do
   end
 
   @doc ~S"""
+  Sets variable modifications to task
+  """
+  def modify(task, username, password, modifications, options \\ [])
+
+  def modify(%{"id" => id} = _task, username, password, modifications, options) do
+    with request_headers <- ApiInstance.get_basic_header(username, password),
+         request_url <- String.replace(@modify, "{id}", id),
+         {:ok, encoded_request_body} <- Jason.encode(modifications),
+         {:ok, %HTTPoison.Response{} = response} <- ApiInstance.post(request_url, request_headers, options),
+         {:no_content, result} <- ApiInstance.get_request_result(response)
+      do
+    else
+      {status, result} -> {status, result}
+      error -> {:error, error}
+      _ -> {:error, "Unknown error of Camunda.Task.Variables.modify/5"}
+    end
+  end
+
+  @doc ~S"""
   Adds string variable into modifications map
   """
   def add_modification(%{"modifications" => modifications} = variables, :string, name, value) do
@@ -54,7 +74,19 @@ defmodule Camunda.Task.Variables do
   end
 
   def add_modification(variables, :string, name, value) do
-    {:ok, Map.put(variables, "modifications", %{name => %{"type" => "string", "value" => value}})}
+    {
+      :ok,
+      Map.put(
+        variables,
+        "modifications",
+        %{
+          name => %{
+            "type" => "string",
+            "value" => value
+          }
+        }
+      )
+    }
   end
 
   @doc ~S"""
@@ -66,7 +98,19 @@ defmodule Camunda.Task.Variables do
   end
 
   def add_modification(variables, :integer, name, value) do
-    {:ok, Map.put(variables, "modifications", %{name => %{"type" => "integer", "value" => value}})}
+    {
+      :ok,
+      Map.put(
+        variables,
+        "modifications",
+        %{
+          name => %{
+            "type" => "integer",
+            "value" => value
+          }
+        }
+      )
+    }
   end
 
   defp variable_map({key, %{"type" => "Json", "value" => value} = data}) do
