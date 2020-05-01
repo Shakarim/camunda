@@ -25,7 +25,7 @@ defmodule Camunda.Task.Variables do
   def list(%{"id" => task_id} = task, username, password, options) do
     with request_headers <- ApiInstance.get_basic_header(username, password),
          request_url <- String.replace(@list, "{id}", task_id),
-         {:ok, %HTTPoison.Response{} = response} <- ApiInstance.get(@list, request_headers, options),
+         {:ok, %HTTPoison.Response{} = response} <- ApiInstance.get(request_url, request_headers, options),
          {:ok, result} <- ApiInstance.get_request_result(response)
       do
       result
