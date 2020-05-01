@@ -45,6 +45,18 @@ defmodule Camunda.Task.Variables do
     end
   end
 
+  @doc ~S"""
+  Adds string variable into modifications map
+  """
+  def add_modification(%{"modifications" => modifications} = variables, :string, value) do
+    modifications = Map.put(modifications, %{"type" => "string", "value" => value})
+    Map.put(variables, "modifications", modifications)
+  end
+
+  def add_modification(variables, :string, value) do
+    Map.put(variables, "modifications", %{"type" => "string", "value" => value})
+  end
+
   defp variable_map({key, %{"type" => "Json", "value" => value} = data}) do
     with {:ok, decoded_value} <- Jason.decode(value) do
       {key, Map.put(data, "value", decoded_value)}
