@@ -6,6 +6,7 @@ defmodule Camunda.Task do
   @list "/task"
   @claim "/task/{id}/claim"
   @get "/task/{id}"
+  @submit "/task/{id}/submit-form"
 
   @doc ~S"""
   POST request for getting a task list
@@ -116,6 +117,26 @@ defmodule Camunda.Task do
          req_url <- String.replace(@get, "{id}", task_id),
          {:ok, %HTTPoison.Response{} = response} <- ApiInstance.get(req_url, req_headers, options),
          {:ok, result} <- ApiInstance.get_request_result(response)
+      do
+      {:ok, result}
+    else
+      {status, result} -> {status, result}
+      error -> {:error, error}
+      _ -> {:error, "Unknown error of Camunda.Task.get_by_id/3"}
+    end
+  end
+
+  @doc """
+  Submit task by route by task id
+  """
+  def submit(task, username, password, id, body \\ %{}, options \\ [])
+
+  def submit(%{"id" => task_id} = _task, username, password, body, options) do
+    with req_headers <- ApiInstance.get_basic_header(username, password),
+         req_url <- String.replace(@submit, "{id}", task_id),
+         {:ok, req_body} <- Jason.encode(body),
+         {:ok, %HTTPoison.Response{} = response} <- ApiInstance.post(req_url, req_body, req_headers, options),
+         {:no_content, result} <- ApiInstance.get_request_result(response)
       do
       {:ok, result}
     else
