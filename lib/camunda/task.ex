@@ -5,6 +5,7 @@ defmodule Camunda.Task do
 
   @list "/task"
   @claim "/task/{id}/claim"
+  @get "/task/{id}"
 
   @doc ~S"""
   POST request for getting a task list
@@ -95,6 +96,32 @@ defmodule Camunda.Task do
     else
       {status, error} -> {status, error}
       result -> {:error, result}
+    end
+  end
+
+  @doc ~S"""
+  Returns task by id (this function returns task map only, it's not load variables
+  or something else)
+
+  ## Examples
+
+    iex> Nbd.CamundaApi.Task.get(123, "demo", "demo")
+    {:error, %{data: String.t()}}
+
+  """
+  def get_by_id(task_id, username, password, options \\ [])
+
+  def get_by_id(task_id, username, password, options) do
+    with req_headers <- ApiInstance.get_basic_header(username, password),
+         req_url <- String.replace(@get, "{id}", task_id),
+         {:ok, %HTTPoison.Response{} = response} <- ApiInstance.get(req_url, req_headers, options),
+         {:ok, result} <- ApiInstance.get_request_result(response)
+      do
+      {:ok, result}
+    else
+      {status, result} -> {status, result}
+      error -> {:error, error}
+      _ -> {:error, "Unknown error of Camunda.Task.get_by_id/3"}
     end
   end
 end
