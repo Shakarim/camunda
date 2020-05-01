@@ -50,11 +50,11 @@ defmodule Camunda.Task.Variables do
   """
   def add_modification(%{"modifications" => modifications} = variables, :string, value) do
     modifications = Map.put(modifications, %{"type" => "string", "value" => value})
-    Map.put(variables, "modifications", modifications)
+    {:ok, Map.put(variables, "modifications", modifications)}
   end
 
   def add_modification(variables, :string, value) do
-    Map.put(variables, "modifications", %{"type" => "string", "value" => value})
+    {:ok, Map.put(variables, "modifications", %{"type" => "string", "value" => value})}
   end
 
   defp variable_map({key, %{"type" => "Json", "value" => value} = data}) do
