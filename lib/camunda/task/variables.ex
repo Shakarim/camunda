@@ -19,6 +19,10 @@ defmodule Camunda.Task.Variables do
 
     {:ok, Map.t()} | {:error, String.t()}
 
+  ## Examples
+
+    iex> Camunda.Task.load_variables(%{"id" => "ae4ec37c-8b85-11ea-bc55-d850e640ee9f"},"operator","operator",[params: %{deserializeValues: false}])
+
   """
   def list(task, username, password, options \\ [])
 
@@ -29,15 +33,7 @@ defmodule Camunda.Task.Variables do
          {:ok, result} <- ApiInstance.get_request_result(response)
       do
       result
-      |> Enum.map(
-           fn {k, v} ->
-             value = case Map.get(v, "type") do
-               "Json" -> Jason.decode!(Map.get(v, "value"))
-               _ -> Map.get(v, "value")
-             end
-             {k, Map.put(v, "value", value)}
-           end
-         )
+      |> Enum.map(&variable_map/1)
       |> Enum.into(%{})
     else
       {status, result} -> {status, result}
@@ -46,4 +42,13 @@ defmodule Camunda.Task.Variables do
     end
   end
 
+  defp variable_map({key, %{"type" => "Json", "value" => value} = data}) do
+    with {:ok, decoded_value} <- Jason.decode(value) do
+      {key, Map.put(data, "value", decoded_value)}
+    else
+      _ -> {key, data}
+    end
+  end
+
+  defp variable_map({key, data}), do: {key, data}
 end
