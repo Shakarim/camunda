@@ -12,7 +12,7 @@ defmodule Camunda.Group do
 
   def list(username, password, options) do
     with request_headers <- ApiInstance.get_basic_header(username, password),
-         request_url <- String.replace(@list),
+         request_url <- @list,
          {:ok, %HTTPoison.Response{} = response} <- ApiInstance.get(request_url, request_headers, options),
          {:ok, result} <- ApiInstance.get_request_result(response)
       do
