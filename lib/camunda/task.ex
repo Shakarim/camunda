@@ -62,7 +62,7 @@ defmodule Camunda.Task do
     with {:ok, variables} <- Camunda.Task.Variables.list(task, username, password, options) do
       {:ok, Map.put(task, "variables", variables)}
     else
-      _ -> {:error, variables}
+      result -> result
     end
   end
 
