@@ -38,6 +38,7 @@ defmodule Camunda.Task.Variables do
              {k, Map.put(v, "value", value)}
            end
          )
+      |> Enum.into(%{})
     else
       {status, result} -> {status, result}
       error -> {:error, error}
