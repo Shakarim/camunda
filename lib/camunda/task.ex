@@ -129,7 +129,7 @@ defmodule Camunda.Task do
   @doc """
   Submit task by route by task id
   """
-  def submit(task, username, password, id, body \\ %{}, options \\ [])
+  def submit(task, username, password, body \\ %{}, options \\ [])
 
   def submit(%{"id" => task_id} = _task, username, password, body, options) do
     with req_headers <- ApiInstance.get_basic_header(username, password),
