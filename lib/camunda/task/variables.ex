@@ -58,6 +58,7 @@ defmodule Camunda.Task.Variables do
          {:ok, %HTTPoison.Response{} = response} <- ApiInstance.post(request_url, request_headers, options),
          {:no_content, result} <- ApiInstance.get_request_result(response)
       do
+      {:ok, result}
     else
       {status, result} -> {status, result}
       error -> {:error, error}
