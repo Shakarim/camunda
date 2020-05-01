@@ -40,9 +40,9 @@ defmodule Camunda.Task do
     end
   end
 
-  def load_variables(task, username, password, params \\ [])
+  def load_variables(task, username, password, options \\ [])
 
-  def load_variables(task, username, password, params) do
-    Map.put(task, "variables", Camunda.Task.Variables.list(task, username, password, params))
+  def load_variables(task, username, password, options) do
+    Map.put(task, "variables", Camunda.Task.Variables.list(task, username, password, options))
   end
 end
