@@ -32,9 +32,12 @@ defmodule Camunda.Task.Variables do
          {:ok, %HTTPoison.Response{} = response} <- ApiInstance.get(request_url, request_headers, options),
          {:ok, result} <- ApiInstance.get_request_result(response)
       do
-      result
-      |> Enum.map(&variable_map/1)
-      |> Enum.into(%{})
+      {
+        :ok,
+        result
+        |> Enum.map(&variable_map/1)
+        |> Enum.into(%{})
+      }
     else
       {status, result} -> {status, result}
       error -> {:error, error}
