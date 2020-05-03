@@ -29,13 +29,13 @@ defmodule Camunda.History.VariableInstance do
     end
   end
 
-  defp variable_map({key, %{"type" => "Json", "value" => value} = data}) do
+  defp variable_map(%{"name" => name, "type" => "Json", "value" => value} = data) do
     with {:ok, decoded_value} <- Jason.decode(value) do
-      {key, Map.put(data, "value", decoded_value)}
+      {name, Map.put(data, "value", decoded_value)}
     else
-      _ -> {key, data}
+      _ -> {name, data}
     end
   end
 
-  defp variable_map({key, data}), do: {key, data}
+  defp variable_map(%{"name" => name} = data), do: {name, data}
 end

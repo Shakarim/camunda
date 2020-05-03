@@ -7,6 +7,9 @@ defmodule Camunda.History.ProcessInstance do
 
   @doc ~S"""
   Returns list of process instances history
+
+  {:ok, [result]} = Camunda.History.ProcessInstance.list("operator", "operator", [params: %{"processDefinitionKey" => "ktt_kp"}])
+  Camunda.History.ProcessInstance.load_variables(result, "operator", "operator")
   """
   def list(username, password, options \\ [])
 
@@ -42,8 +45,7 @@ defmodule Camunda.History.ProcessInstance do
   def load_variables(process_instance, username, password, body \\ %{}, options \\ [])
 
   def load_variables(%{"id" => process_instance_id} = process_instance, username, password, body, options) do
-    with {:ok, req_body} <- Jason.encode(%{"processInstanceId" => process_instance_id}),
-         req_body <- Map.merge(body, req_body),
+    with req_body <- Map.merge(body, %{"processInstanceId" => process_instance_id}),
          req_options <- options ++ [params: %{deserializeValues: false}],
          {:ok, variables} <- Camunda.History.VariableInstance.list(username, password, req_body, req_options)
       do
