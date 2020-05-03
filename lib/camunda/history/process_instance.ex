@@ -31,6 +31,7 @@ defmodule Camunda.History.ProcessInstance do
     process_instance :: Map.t()
     username :: String.t()
     password :: String.t()
+    body :: Map.t()
     options :: Keyword.t()
 
   ## Returns
@@ -38,11 +39,12 @@ defmodule Camunda.History.ProcessInstance do
     {:ok, Map.t()} | {:error, Map.t() | String.t()}
 
   """
-  def load_variables(process_instance, username, password, options \\ [])
+  def load_variables(process_instance, username, password, body \\ %{}, options \\ [])
 
-  def load_variables(%{"id" => process_instance_id} = process_instance, username, password, options) do
+  def load_variables(%{"id" => process_instance_id} = process_instance, username, password, body, options) do
     with {:ok, req_body} <- Jason.encode(%{"processInstanceId" => process_instance_id}),
-         req_options <- [params: %{deserializeValues: false}],
+         req_body <- Map.merge(body, req_body),
+         req_options <- options ++ [params: %{deserializeValues: false}],
          {:ok, variables} <- Camunda.History.VariableInstance.list(username, password, req_body, req_options)
       do
       {:ok, Map.put(process_instance, "variables", variables)}
