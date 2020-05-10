@@ -58,7 +58,7 @@ defmodule Camunda.Task do
     {:ok, Map.t()} | {:error, Map.t() | String.t()}
 
   """
-  def load_variables(task, username, password, options \\ [])
+  def load_variables(task, username, password, options \\ [params: %{deserializeValues: false}])
 
   def load_variables(task, username, password, options) do
     with {:ok, variables} <- Camunda.Task.Variables.list(task, username, password, options) do
