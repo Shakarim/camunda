@@ -153,6 +153,26 @@ defmodule Camunda.Task.Variables do
     }
   end
 
+  @doc ~S"""
+  Adds json variable into modifications map
+  """
+  def add_modification(variables, :json, name, value) when (is_map(value)) do
+    with {:ok, value} <- Jason.encode(value) do
+      add_modification(variables, :json, name, value)
+    else
+      result -> result
+    end
+  end
+
+  def add_modification(%{"modifications" => modifications} = variables, :json, name, value) when (is_binary(value)) do
+    modifications = Map.put(modifications, name, %{"type" => "json", "value" => value})
+    {:ok, Map.put(variables, "modifications", modifications)}
+  end
+
+  def add_modification(variables, :json, name, value) do
+    {:ok, Map.put(variables, "modifications", %{name => %{"type" => "integer", "value" => value}})}
+  end
+
   defp variable_map({key, %{"type" => "Json", "value" => value} = data}) do
     with {:ok, decoded_value} <- Jason.decode(value) do
       {key, Map.put(data, "value", decoded_value)}
