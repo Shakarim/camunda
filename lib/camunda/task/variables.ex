@@ -5,6 +5,7 @@ defmodule Camunda.Task.Variables do
 
   @list "/task/{id}/variables"
   @modify "/task/{id}/variables"
+  @get "/task/{id}/variables/{variable}"
 
   @doc """
   Returns list of task variables by username and password
@@ -43,6 +44,44 @@ defmodule Camunda.Task.Variables do
       {status, result} -> {status, result}
       error -> {:error, error}
       _ -> {:error, "Unknown error of Camunda.Task.Variables.list/4"}
+    end
+  end
+
+  @doc """
+  Returns variable of task by username and password
+
+  ## Params
+
+    task :: Map.t()
+    id :: String.t()
+    username :: String.t()
+    password :: String.t()
+    options :: Map.t()
+
+  ## Returns
+
+    {:ok, Map.t()} | {:error, String.t()}
+
+  ## Examples
+
+    iex> Camunda.Task.get(%{"id" => "ae4ec37c-8b85-11ea-bc55-d850e640ee9f"}, "some_variable", "operator", "operator", [params: %{deserializeValues: false}])
+
+  """
+  def get(task, id, username, password, options \\ [])
+
+  def get(%{"id" => task_id} = _task, id, username, password, options) do
+    with request_headers <- ApiInstance.get_basic_header(username, password),
+         request_url <- @list
+                        |> String.replace("{id}", task_id)
+                        |> String.replace("{variable}", id),
+         {:ok, %HTTPoison.Response{} = response} <- ApiInstance.get(request_url, request_headers, options),
+         {:ok, result} <- ApiInstance.get_request_result(response)
+      do
+      {:ok, result}
+    else
+      {status, result} -> {status, result}
+      error -> {:error, error}
+      _ -> {:error, "Unknown error of Camunda.Task.Variables.get/5"}
     end
   end
 
