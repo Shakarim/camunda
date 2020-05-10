@@ -64,7 +64,7 @@ defmodule Camunda.Task.Variables do
 
   ## Examples
 
-    iex> Camunda.Task.get_by_id(%{"id" => "ae4ec37c-8b85-11ea-bc55-d850e640ee9f"}, "some_variable", "operator", "operator", [params: %{deserializeValues: false}])
+    iex> Camunda.Task.Variables.get_by_id(%{"id" => "ae4ec37c-8b85-11ea-bc55-d850e640ee9f"}, "operator", "operator", "some_variable", [params: %{deserializeValues: false}])
 
   """
   def get_by_id(task, username, password, id, options \\ [])
@@ -186,7 +186,7 @@ defmodule Camunda.Task.Variables do
   end
 
   def add_modification(variables, :json, name, value) do
-    {:ok, Map.put(variables, "modifications", %{name => %{"type" => "integer", "value" => value}})}
+    {:ok, Map.put(variables, "modifications", %{name => %{"type" => "json", "value" => value}})}
   end
 
   defp variable_map({key, %{"type" => "Json", "value" => value} = data}) do
