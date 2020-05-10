@@ -67,9 +67,9 @@ defmodule Camunda.Task.Variables do
     iex> Camunda.Task.get_by_id(%{"id" => "ae4ec37c-8b85-11ea-bc55-d850e640ee9f"}, "some_variable", "operator", "operator", [params: %{deserializeValues: false}])
 
   """
-  def get_by_id(task, id, username, password, options \\ [])
+  def get_by_id(task, username, password, id, options \\ [])
 
-  def get_by_id(%{"id" => task_id} = _task, id, username, password, options) do
+  def get_by_id(%{"id" => task_id} = _task, username, password, id, options) do
     with request_headers <- ApiInstance.get_basic_header(username, password),
          request_url <- @get
                         |> String.replace("{id}", task_id)
