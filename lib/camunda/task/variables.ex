@@ -71,7 +71,7 @@ defmodule Camunda.Task.Variables do
 
   def get_by_id(%{"id" => task_id} = _task, id, username, password, options) do
     with request_headers <- ApiInstance.get_basic_header(username, password),
-         request_url <- @list
+         request_url <- @get
                         |> String.replace("{id}", task_id)
                         |> String.replace("{variable}", id),
          {:ok, %HTTPoison.Response{} = response} <- ApiInstance.get(request_url, request_headers, options),
@@ -104,6 +104,22 @@ defmodule Camunda.Task.Variables do
       _ -> {:error, "Unknown error of Camunda.Task.Variables.modify/5"}
     end
   end
+
+  @doc ~S"""
+  Beahiour for add_modification with tuple as first argument
+
+  ## Examples
+
+    iex> Camunda.Task.Variables.add_modification({:ok, %{}}, :string,  "some", "value")
+    {:ok, %{"modifications" => %{"some" => %{"type" => "string", "value" => "value"}}}}
+
+    iex> Camunda.Task.Variables.add_modification({:error, "It's error"}, :string,  "some", "value")
+    {:error, "It's error"}
+
+  """
+  def add_modification({:ok, variables}, type, name, value), do: add_modification(variables, type, name, value)
+
+  def add_modification({:error, error}, _type, _name, _value), do: {:error, error}
 
   @doc ~S"""
   Adds string variable into modifications map
