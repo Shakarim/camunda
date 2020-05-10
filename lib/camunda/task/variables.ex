@@ -172,7 +172,7 @@ defmodule Camunda.Task.Variables do
   @doc ~S"""
   Adds json variable into modifications map
   """
-  def add_modification(variables, :json, name, value) when (is_map(value)) do
+  def add_modification(variables, :json, name, value) when (is_map(value) or is_list(value)) do
     with {:ok, value} <- Jason.encode(value) do
       add_modification(variables, :json, name, value)
     else
