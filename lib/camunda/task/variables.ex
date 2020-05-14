@@ -106,6 +106,35 @@ defmodule Camunda.Task.Variables do
   end
 
   @doc ~S"""
+  Creates map with modifications for camunda
+
+  ## Params
+
+    type :: Atom.t()
+    name :: String.t()
+    value :: String.t() | Integer.t() | Map.t() | List.t() | Keyword.t()
+
+  ## Examples
+
+    Camunda.Task.Variables.create_modification(:boolean, "expire", true)
+
+  """
+  def create_modification(:string, name, value),
+      do: %{"modification" => %{name => %{"type" => "string", "value" => value}}}
+
+  def create_modification(:integer, name, value),
+      do: %{"modification" => %{name => %{"type" => "integer", "value" => value}}}
+
+  def create_modification(:boolean, name, value) when (is_boolean(value)),
+      do: %{"modification" => %{name => %{"type" => "boolean", "value" => value}}}
+
+  def create_modification(:json, name, value) when (is_binary(value)),
+      do: %{"modification" => %{name => %{"type" => "Json", "value" => value}}}
+
+  def create_modification(:json, name, value) when (is_map(value) or is_list(value)),
+      do: %{"modification" => %{name => %{"type" => "Json", "value" => Jason.encode!(value)}}}
+
+  @doc ~S"""
   Beahiour for add_modification with tuple as first argument
 
   ## Examples
