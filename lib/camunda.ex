@@ -42,7 +42,7 @@ defmodule Camunda do
   def get_auth_data,
       do: prepare_auth_data({Application.get_env(:camunda, :username), Application.get_env(:camunda, :password)})
 
-  defp prepare_auth_data({username, password}) when (username !== nil && password !== nil),
+  defp prepare_auth_data({username, password}) when (username !== nil and password !== nil),
        do: {:ok, {username, password}}
 
   defp prepare_auth_data(_),
