@@ -8,9 +8,9 @@ defmodule Camunda do
 
   ## Returns
 
-    [username, password]
+    {:ok, {username, password}}
 
-    [nil, nil]
+    {:error, %{data: "Auth data not found"}}
 
   ## Params
 
@@ -24,9 +24,9 @@ defmodule Camunda do
                                  |> List.last()
                                  |> Base.decode64!()
                                  |> String.split(":") do
-      {username, password}
+      {:ok, {username, password}}
     else
-      _ -> [nil, nil]
+      _ -> {:error, %{data: "Auth data not found"}}
     end
   end
 
