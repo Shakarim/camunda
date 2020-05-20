@@ -39,5 +39,12 @@ defmodule Camunda do
     {nil, nil}
 
   """
-  def get_auth_data, do: {Application.get_env(:camunda, :username), Application.get_env(:camunda, :password)}
+  def get_auth_data,
+      do: prepare_auth_data({Application.get_env(:camunda, :username), Application.get_env(:camunda, :password)})
+
+  defp prepare_auth_data({username, password}) when (username !== nil && password !== nil),
+       do: {:ok, {username, password}}
+
+  defp prepare_auth_data({username, password}),
+       do: {:error, "Server doesn't have configured auth data for camunda. Contact administrator"}
 end
