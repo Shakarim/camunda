@@ -10,7 +10,7 @@ defmodule Camunda do
 
     {:ok, {username, password}}
 
-    {:error, %{data: "Auth data not found"}}
+    {:error, "Auth data not found"}
 
   ## Params
 
@@ -26,7 +26,7 @@ defmodule Camunda do
                                  |> String.split(":") do
       {:ok, {username, password}}
     else
-      _ -> {:error, %{data: "Auth data not found"}}
+      _ -> {:error, "Auth data not found"}
     end
   end
 
