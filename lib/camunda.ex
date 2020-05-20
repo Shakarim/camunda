@@ -45,6 +45,6 @@ defmodule Camunda do
   defp prepare_auth_data({username, password}) when (username !== nil && password !== nil),
        do: {:ok, {username, password}}
 
-  defp prepare_auth_data({username, password}),
+  defp prepare_auth_data(_),
        do: {:error, "Server doesn't have configured auth data for camunda. Contact administrator"}
 end
