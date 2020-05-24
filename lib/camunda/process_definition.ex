@@ -40,7 +40,8 @@ defmodule Camunda.ProcessDefinition do
     with {:ok, process_id} <- get_latest_version_of_process_id_by_definition_key(username, password, definition_key),
          request_headers <- ApiInstance.get_basic_header(username, password),
          request_url <- String.replace(@start, "{process_id}", process_id),
-         {:ok, request_body} <- Jason.encode(%{businessKey: business_key, variables: data}),
+         variables <- prepare_variables_map(data),
+         {:ok, request_body} <- Jason.encode(%{businessKey: business_key, variables: variables}),
          {:ok, %HTTPoison.Response{} = response} <- ApiInstance.post(request_url, request_body, request_headers, []),
          {:ok, result} <- ApiInstance.get_request_result(response)
       do
@@ -84,4 +85,14 @@ defmodule Camunda.ProcessDefinition do
       result -> {:error, result}
     end
   end
+
+  # Prepares process instantiation variables map
+  defp prepare_variables_map(data), do: Enum.map(data, &prepare_variable/1)
+
+  defp prepare_variable({_, value}) when (is_map(value)), do: %{type: "json", "value": value}
+  defp prepare_variable({_, value}) when (is_list(value)), do: %{type: "json", "value": value}
+  defp prepare_variable({_, value}) when (is_binary(value)), do: %{type: "string", "value": value}
+  defp prepare_variable({_, value}) when (is_float(value)), do: %{type: "float", "value": value}
+  defp prepare_variable({_, value}) when (is_integer(value)), do: %{type: "integer", "value": value}
+  defp prepare_variable({_, value}), do: %{type: "string", "value": value}
 end
