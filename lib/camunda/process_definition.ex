@@ -87,12 +87,12 @@ defmodule Camunda.ProcessDefinition do
   end
 
   # Prepares process instantiation variables map
-  defp prepare_variables_map(data), do: Enum.map(data, &prepare_variable/1)
+  defp prepare_variables_map(data), do: Enum.into(Enum.map(data, &prepare_variable/1), %{})
 
-  defp prepare_variable({_, value}) when (is_map(value)), do: %{type: "json", "value": value}
-  defp prepare_variable({_, value}) when (is_list(value)), do: %{type: "json", "value": value}
-  defp prepare_variable({_, value}) when (is_binary(value)), do: %{type: "string", "value": value}
-  defp prepare_variable({_, value}) when (is_float(value)), do: %{type: "float", "value": value}
-  defp prepare_variable({_, value}) when (is_integer(value)), do: %{type: "integer", "value": value}
-  defp prepare_variable({_, value}), do: %{type: "string", "value": value}
+  defp prepare_variable({name, value}) when (is_map(value)), do: {name, %{type: "json", "value": value}}
+  defp prepare_variable({name, value}) when (is_list(value)), do: {name, %{type: "json", "value": value}}
+  defp prepare_variable({name, value}) when (is_binary(value)), do: {name, %{type: "string", "value": value}}
+  defp prepare_variable({name, value}) when (is_float(value)), do: {name, %{type: "float", "value": value}}
+  defp prepare_variable({name, value}) when (is_integer(value)), do: {name, %{type: "integer", "value": value}}
+  defp prepare_variable({name, value}), do: {name, %{type: "string", "value": value}}
 end
