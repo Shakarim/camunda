@@ -120,19 +120,19 @@ defmodule Camunda.Task.Variables do
 
   """
   def create_modification(:string, name, value),
-      do: %{"modification" => %{name => %{"type" => "string", "value" => value}}}
+      do: %{"modifications" => %{name => %{"type" => "string", "value" => value}}}
 
   def create_modification(:integer, name, value),
-      do: %{"modification" => %{name => %{"type" => "integer", "value" => value}}}
+      do: %{"modifications" => %{name => %{"type" => "integer", "value" => value}}}
 
   def create_modification(:boolean, name, value) when (is_boolean(value)),
-      do: %{"modification" => %{name => %{"type" => "boolean", "value" => value}}}
+      do: %{"modifications" => %{name => %{"type" => "boolean", "value" => value}}}
 
   def create_modification(:json, name, value) when (is_binary(value)),
-      do: %{"modification" => %{name => %{"type" => "Json", "value" => value}}}
+      do: %{"modifications" => %{name => %{"type" => "Json", "value" => value}}}
 
   def create_modification(:json, name, value) when (is_map(value) or is_list(value)),
-      do: %{"modification" => %{name => %{"type" => "Json", "value" => Jason.encode!(value)}}}
+      do: %{"modifications" => %{name => %{"type" => "Json", "value" => Jason.encode!(value)}}}
 
   @doc ~S"""
   Beahiour for add_modification with tuple as first argument
