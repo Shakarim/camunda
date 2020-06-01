@@ -58,14 +58,27 @@ defmodule Camunda.Task do
     {:ok, Map.t()} | {:error, Map.t() | String.t()}
 
   """
-  def load_variables(task, username, password, options \\ [params: %{deserializeValues: false}])
+  def load_variables(task, username, password, options \\ [params: %{deserializeValues: false}]) when (is_map(task))
 
-  def load_variables(task, username, password, options) do
+  def load_variables(task, username, password, options) when (is_map(task)) do
     with {:ok, variables} <- Camunda.Task.Variables.list(task, username, password, options) do
       {:ok, Map.put(task, "variables", variables)}
     else
       result -> result
     end
+  end
+
+  def load_variables(tasks, username, password, options) when (is_list(tasks)) do
+    Enum.map(
+      tasks,
+      fn x ->
+        with {:ok, v} <- Camunda.Task.load_variables(x, username, password) do
+          v
+        else
+          _ -> x
+        end
+      end
+    )
   end
 
   @doc ~S"""
