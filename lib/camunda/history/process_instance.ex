@@ -51,8 +51,8 @@ defmodule Camunda.History.ProcessInstance do
                    |> Enum.filter(fn {status, _} -> status !== :ok end)
       do
       case Enum.length(errors) do
-        0 -> List.first(errors)
-        _ -> {:ok, data}
+        0 -> {:ok, List.first(errors)}
+        _ -> Enum.first(errors)
       end
     else
       {status, result} -> {status, result}
