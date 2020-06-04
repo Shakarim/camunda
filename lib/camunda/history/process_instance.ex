@@ -44,14 +44,27 @@ defmodule Camunda.History.ProcessInstance do
   """
   def load_variables(process_instance, username, password, body \\ %{}, options \\ [])
 
-  def load_variables(%{"id" => process_instance_id} = process_instance, username, password, body, options) do
+  def load_variables(process_instance, username, password, body, options) when (is_list(process_instance)) do
+    data = process_instance
+           |> Enum.map(&(load_variables(&1, username, password, body, options)))
+    errors = data
+             |> Enum.filter(fn {status, _} -> status !== :ok end)
+    case Enum.length(errors) do
+      0 -> List.first(errors)
+      _ -> {:ok, data}
+    end
+  end
+
+  def load_variables(%{"id" => process_instance_id} = process_instance, username, password, body, options) when (is_map(process_instance)) do
     with req_body <- Map.merge(body, %{"processInstanceId" => process_instance_id}),
          req_options <- options ++ [params: %{deserializeValues: false}],
          {:ok, variables} <- Camunda.History.VariableInstance.list(username, password, req_body, req_options)
       do
       {:ok, Map.put(process_instance, "variables", variables)}
     else
-      result -> result
+      {status, result} -> {status, result}
+      error -> {:error, error}
+      _ -> {:error, "Unknown error of Camunda.History.ProcessInstance.load_variables/5"}
     end
   end
 end
