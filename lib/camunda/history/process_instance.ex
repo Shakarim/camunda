@@ -45,13 +45,11 @@ defmodule Camunda.History.ProcessInstance do
   def load_variables(process_instance, username, password, body \\ %{}, options \\ [])
 
   def load_variables(process_instance, username, password, body, options) when (is_list(process_instance)) do
-    with {:ok, data} <- process_instance
-                        |> Enum.map(&(load_variables(&1, username, password, body, options))),
-         errors <- data
-                   |> Enum.filter(fn {status, _} -> status !== :ok end)
+    with data <- Enum.map(process_instance, &(load_variables(&1, username, password, body, options))),
+         errors <- Enum.filter(data, fn {status, _} -> status !== :ok end)
       do
-      case Enum.length(errors) do
-        0 -> {:ok, List.first(errors)}
+      case Enum.count(errors) do
+        0 -> {:ok, data |> Enum.map(fn {_, v} -> v end)}
         _ -> Enum.first(errors)
       end
     else
