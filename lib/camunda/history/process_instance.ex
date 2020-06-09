@@ -11,11 +11,12 @@ defmodule Camunda.History.ProcessInstance do
   {:ok, [result]} = Camunda.History.ProcessInstance.list("operator", "operator", [params: %{"processDefinitionKey" => "ktt_kp"}])
   Camunda.History.ProcessInstance.load_variables(result, "operator", "operator")
   """
-  def list(username, password, options \\ [])
+  def list(username, password, body \\ %{}, options \\ [])
 
-  def list(username, password, options) do
+  def list(username, password, body, options) do
     with req_headers <- ApiInstance.get_basic_header(username, password),
-         {:ok, %HTTPoison.Response{} = response} <- ApiInstance.get(@list, req_headers, options),
+         {:ok, req_body} <- Jason.encode(body),
+         {:ok, %HTTPoison.Response{} = response} <- ApiInstance.post(@list, req_body, req_headers, options),
          {:ok, result} <- ApiInstance.get_request_result(response)
       do
       {:ok, result}
