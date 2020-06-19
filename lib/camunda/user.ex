@@ -11,7 +11,9 @@ defmodule Camunda.User do
     iex> Camunda.User.get_user_profile_by_id("demo", "demo", "demo")
 
   """
-  def get_user_profile_by_id(id, username, password, options \\ []) when (id !== nil) do
+  def get_user_profile_by_id(id, username, password, options \\ [])
+  def get_user_profile_by_id(nil, _username, _password, options), do: {:error, "User id can not be nil"}
+  def get_user_profile_by_id(id, username, password, options) do
     with req_headers <- ApiInstance.get_basic_header(username, password),
          req_url <- String.replace(@profile, "{id}", id),
          {:ok, %HTTPoison.Response{} = response} <- ApiInstance.get(req_url, req_headers, options),
@@ -24,5 +26,4 @@ defmodule Camunda.User do
       _ -> {:error, "Unknown error of Camunda.User.get_user_by_id/4"}
     end
   end
-  def get_user_profile_by_id(_, _, _, options \\ []), do: {:not_found, "User id can not be nil"}
 end
