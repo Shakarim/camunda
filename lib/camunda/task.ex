@@ -68,7 +68,7 @@ defmodule Camunda.Task do
     end
   end
 
-  def load_variables(tasks, username, password, options) when (is_list(tasks)) do
+  def load_variables(tasks, username, password, _options) when (is_list(tasks)) do
     Enum.map(
       tasks,
       fn x ->

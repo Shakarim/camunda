@@ -51,12 +51,8 @@ defmodule Camunda.History.ProcessInstance do
       do
       case Enum.count(errors) do
         0 -> {:ok, data |> Enum.map(fn {_, v} -> v end)}
-        _ -> Enum.first(errors)
+        _ -> Enum.take(errors, 1)
       end
-    else
-      {status, result} -> {status, result}
-      error -> {:error, error}
-      _ -> {:error, "Unknown error of Camunda.History.ProcessInstance.load_variables/5"}
     end
   end
 
